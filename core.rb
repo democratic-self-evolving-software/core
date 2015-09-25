@@ -13,7 +13,10 @@ def most_popular_pull_request
 
     curr = count.new(0, 0)
     Octokit.issue_comments(REPO, pr.number).each do |comment|
-      curr.votes += 1 if comment.body.include?('+1')
+      if (m = /\B([+-]\d)\b/.match(comment.body)) && (v = m[1].to_i)
+        curr.votes += v if -1 <= v && v <= 2
+      end
+
       curr.total += 1
     end
 
